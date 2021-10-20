@@ -2,8 +2,10 @@ var plates;
 var myMap;
 var link2 = "data/PB2002_plates.json";
 
-d3.json(link2,function(response){
-    //console.log(response);
+
+// retrieve the data using  D3
+d3.json(link2).then(function(response){
+    console.log(response);
     plates = L.geoJSON(response,{  
         style: function(feature){
             return {
@@ -17,14 +19,13 @@ d3.json(link2,function(response){
             layer.bindPopup("Plate Name: "+feature.properties.PlateName);
         }
         
-    })
+    });
 
     
-    var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
+    var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson";
+   
 
-    
-
-    d3.json(link,function(data){
+    d3.json(link).then(function(data){
     console.log(data);
    
     function createCircleMarker(feature,latlng){
@@ -38,7 +39,7 @@ d3.json(link2,function(response){
         }
         return L.circleMarker( latlng, options );
 
-    }
+    };
 
 
     var earthQuakes = L.geoJSON(data,{
@@ -57,31 +58,28 @@ d3.json(link2,function(response){
 });
 
 
-  
-
-
   function createMap(plates,earthQuakes) {
 
-    
-    var satellite = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
-      attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+    //updated links
+    var satellite = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
       maxZoom: 18,
-      id: "mapbox.satellite",
-      accessToken: config.API_KEY
+      id: "mapbox/satellite-v9",
+      accessToken: API_KEY
     });
   
-    var grayscale = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
-      attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+    var grayscale = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
       maxZoom: 18,
-      id: "mapbox.light",
-      accessToken: config.API_KEY
+      id: "mapbox/light-v10",
+      accessToken: API_KEY
     });
 
-    var outdoors = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
-      attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+    var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
       maxZoom: 18,
-      id: "mapbox.outdoors",
-      accessToken: config.API_KEY
+      id: "mapbox/outdoors-v11",
+      accessToken: API_KEY
     });
   
     // Define a baseMaps object to hold our base layers
@@ -100,7 +98,7 @@ d3.json(link2,function(response){
     // Create our map
     var myMap = L.map("map", {
       center: [
-        37.0902405,-95.7128906
+        34.0522,-118.2437
       ],
       zoom: 4,
       layers: [satellite, plates, earthQuakes]
@@ -125,7 +123,7 @@ d3.json(link2,function(response){
 
     document.querySelector(".legend").innerHTML=displayLegend();
 
-  }
+  };
 
 
   function chooseColor(mag){
@@ -143,7 +141,7 @@ d3.json(link2,function(response){
         default:
             return "red";
     };
-}
+};
 
 function displayLegend(){
     var legendInfo = [{
@@ -176,4 +174,4 @@ function displayLegend(){
     
     return header+strng;
 
-}
+};
